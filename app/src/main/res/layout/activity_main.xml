@@ -41,19 +41,26 @@
         android:layout_marginTop="20dp"
         android:text="LED 2" />
 
+    <Button
+        android:id="@+id/btnIniciar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="Iniciar Medição" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        >
+        android:layout_gravity="bottom">
+
         <TextView
+            android:id="@+id/informacoes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="INFORMAÇÕES"
-            android:gravity="center"
             android:layout_gravity="center"
-            android:id="@+id/informacoes"
-            />
+            android:gravity="center"
+            android:text="INFORMAÇÕES" />
     </FrameLayout>
 
 </LinearLayout>

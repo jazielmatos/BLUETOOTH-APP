@@ -33,11 +33,16 @@ public class MainActivity extends AppCompatActivity {
     private static final int Solicita_Ativacao = 1;
     private static final int Solicita_Conexao = 2;
     private static final int MESSAGE_READ = 3;
+
+    Boolean Medicao = false;
+
     Button btnConectar;
     Button btnLed1;
     Button btnLed2;
+    Button IniciarMedicao;
 
     TextView infoTextView;
+    int estadoBtnMedir=1;
 
     BluetoothDevice meuDevice = null;
     BluetoothSocket meuSocket = null;
@@ -60,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         btnConectar = (Button) findViewById(R.id.btnConexao);
         btnLed1 = (Button) findViewById(R.id.btnLed1);
         btnLed2 = (Button) findViewById(R.id.btnLed2);
+        IniciarMedicao = (Button) findViewById(R.id.btnIniciar);
 
         infoTextView = (TextView) findViewById(R.id.informacoes);
 
@@ -93,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*
         btnLed1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,7 +120,25 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        */
+        IniciarMedicao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(conexao){
+                    if(estadoBtnMedir == 1 && Medicao == false){
+                     connectedThread.enviar("m");
 
+                    }else if(estadoBtnMedir == 2 && Medicao){
+                        connectedThread.enviar("p");
+                        
+                    }
+
+                }else {
+                    Toast.makeText(getApplicationContext(), "Bluetooth não está Conectado", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
 
 
         mHandler = new Handler() {
@@ -129,17 +154,26 @@ public class MainActivity extends AppCompatActivity {
                         int tamInformacao = dadosCompletos.length();
                         if (dadosBluetooth.charAt(0) == '{') {
 
-
-                           // Log.d("Recebidos", dadosFinais);
-                            
                             String dadosFinais = dadosBluetooth.substring(1, tamInformacao);
-                            for (int i=1; i<=20;i++){
+                            Log.d("Recebidos", dadosFinais);
+                           /* while(estadoBtnMedir == 1 && Medicao) {
+                                infoTextView.setText(dadosFinais);
+                                Log.d("Recebidos", dadosFinais);
+                                dadosBluetooth.delete(0, dadosBluetooth.length());
+                            }*/
 
-                                    Log.d("Recebidos", dadosFinais);
-                                    dadosBluetooth.delete(0, dadosBluetooth.length());
+
+
+                            infoTextView.setText(dadosFinais);
+                            if(dadosFinais.contains("PARADO")){
+                                IniciarMedicao.setText("INICIAR MEDIÇÃO");
+                                estadoBtnMedir = 1;
+                                Medicao = false;
+                            }else{
+                                Medicao = true;
+                                estadoBtnMedir = 2;
+                                IniciarMedicao.setText("PARAR MEDIÇÃO");
                             }
-
-                           // infoTextView.setText(dadosFinais);
 
                             /*if (dadosFinais.contains("l1on")) {
                                 btnLed1.setText("LED 1 LIGADO");
@@ -154,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
 
                         }
 
-                        //dadosBluetooth.delete(0, dadosBluetooth.length());
+                        dadosBluetooth.delete(0, dadosBluetooth.length());
 
                     }
                 }
@@ -172,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "O bluetooth foi ativado", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(this, "O bluetooth não foi ativado, o app será encerrado", Toast.LENGTH_LONG).show();
-
                     finish();
                 }
                 break;
